@@ -1,0 +1,23 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Parent Created{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Parent Account Created</h1>
+
+<p><strong>Name:</strong> {{ parent.first_name }} {{ parent.last_name }}</p>
+
+{% if password %}
+    <p><strong>Username:</strong> {{ parent.user.username }}</p>
+    <p><strong>Temporary Password:</strong> {{ password }}</p>
+
+    <div class="alert alert-info">
+        Save this password now. It will not be shown again.
+    </div>
+{% else %}
+    <p class="text-muted">No login created.</p>
+{% endif %}
+
+<a href="{% url 'create_parent' %}" class="btn btn-secondary">Create Another</a>
+{% endblock %}

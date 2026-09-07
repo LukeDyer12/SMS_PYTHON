@@ -1,0 +1,81 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h2 class="mt-4">Dashboard</h2>
+
+<div class="row mt-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Total Students</h4>
+                <h2>{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Total Teachers</h4>
+                <h2>{{ total_teachers }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Total Classrooms</h4>
+                <h2>{{ total_classrooms }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Present Today</h4>
+                <h2 class="text-success">{{ present_today }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Absent Today</h4>
+                <h2 class="text-danger">{{ absent_today }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Tardy Today</h4>
+                <h2 class="text-warning">{{ tardy_today }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h4>Attendance %</h4>
+                <h2 class="text-primary">{{ attendance_percentage }}%</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

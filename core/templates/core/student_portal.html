@@ -1,0 +1,76 @@
+{% extends "site/base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">Welcome, {{ student.first_name }}</h2>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+
+        <!-- Classes -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-book display-5 icon-primary"></i>
+                    <h5 class="card-title mt-2">Classes</h5>
+                    <p class="display-6">{{ classes.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Due -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-check display-5 icon-success"></i>
+                    <h5 class="card-title mt-2">Assignments Due</h5>
+                    <p class="display-6">{{ assignments_due.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-data display-5 icon-warning"></i>
+                    <h5 class="card-title mt-2">Attendance</h5>
+                    <p class="display-6">{{ attendance_percentage }}%</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Class List -->
+    <h4>Your Classes</h4>
+    <div class="list-group mb-4">
+        {% for c in classes %}
+            <a href="{% url 'classroom_detail' c.id %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-book-half icon-primary"></i>
+                {{ c.name }}
+            </a>
+        {% empty %}
+            <p>No classes assigned.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Assignments Due -->
+    <h4>Assignments Due</h4>
+    <div class="list-group">
+        {% for a in assignments_due %}
+            <div class="list-group-item">
+                <i class="bi bi-journal-check icon-success"></i>
+                <strong>{{ a.title }}</strong> — {{ a.classroom.name }}
+                <div class="text-muted small">Due: {{ a.due_date }}</div>
+            </div>
+        {% empty %}
+            <p>No assignments due.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

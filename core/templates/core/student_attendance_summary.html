@@ -1,0 +1,18 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Attendance Summary - {{ student.first_name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Attendance Summary for {{ student.first_name }} {{ student.last_name }}</h1>
+
+<table class="table table-bordered w-50">
+    <tr><th>Total Records</th><td>{{ summary.total }}</td></tr>
+    <tr><th>Present</th><td>{{ summary.present }}</td></tr>
+    <tr><th>Absent</th><td>{{ summary.absent }}</td></tr>
+    <tr><th>Tardy</th><td>{{ summary.tardy }}</td></tr>
+    <tr><th>Attendance %</th><td>{{ summary.percentage }}%</td></tr>
+</table>
+
+<a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary">Back</a>
+{% endblock %}

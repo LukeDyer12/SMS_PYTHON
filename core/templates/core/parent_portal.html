@@ -1,0 +1,61 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Parent Portal{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome, {{ parent.first_name }} {{ parent.last_name }}</h1>
+
+{% for child in children %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        {{ child.student.first_name }} {{ child.student.last_name }}
+    </div>
+    <div class="card-body">
+
+        <h5>Attendance</h5>
+        <p><strong>Present:</strong> {{ child.attendance.present }}</p>
+        <p><strong>Absent:</strong> {{ child.attendance.absent }}</p>
+        <p><strong>Tardy:</strong> {{ child.attendance.tardy }}</p>
+
+        <h5 class="mt-3">Assignments</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Assignment</th>
+                    <th>Due</th>
+                    <th>Grade</th>
+                    <th>Percent</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in child.assignments %}
+                <tr>
+                    <td>{{ item.assignment.title }}</td>
+                    <td>{{ item.assignment.date_due }}</td>
+                    <td>{{ item.grade|default:"—" }}</td>
+                    <td>
+                        {% if item.percent %}
+                            {{ item.percent|floatformat:2 }}%
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.is_missing %}
+                            <span class="badge bg-danger">Missing</span>
+                        {% else %}
+                            <span class="badge bg-success">Submitted</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

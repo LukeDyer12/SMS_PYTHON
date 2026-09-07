@@ -1,0 +1,246 @@
+{% extends "site/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="assignment-page">
+    <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-link">
+        ← Back to Classroom
+    </a>
+
+    <h1 class="mb-4">Assignments for {{ classroom.name }}</h1>
+
+    <!-- Floating Add Button -->
+    <a href="{% url 'add_assignment' classroom.id %}" class="fab-add">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+    <!-- Sorting + Filtering -->
+    <div class="assignment-controls">
+        <select id="sortSelect" class="form-select">
+            <option value="due">Sort by Due Date</option>
+            <option value="subject">Sort by Subject</option>
+            <option value="completion">Sort by Completion</option>
+        </select>
+
+        <select id="filterSelect" class="form-select">
+            <option value="all">All Subjects</option>
+            <option value="Reading">Reading</option>
+            <option value="Math">Math</option>
+            <option value="Writing">Writing</option>
+            <option value="Science">Science</option>
+            <option value="Social Studies">Social Studies</option>
+        </select>
+    </div>
+
+    <!-- Masonry Layout -->
+    <div class="assignment-grid">
+        {% for a in assignments %}
+        {% with obj=a.assignment %}
+        <div class="assignment-card"
+             data-subject="{{ obj.subject }}"
+             data-graded="{{ a.graded }}"
+             data-total="{{ a.total_students }}"
+             data-due="{{ obj.date_due|date:'Ymd' }}">
+
+            <div class="assignment-header">
+                <h4 class="assignment-title">
+                    <i class="bi bi-journal-text"></i> {{ obj.title }}
+                </h4>
+                <span class="subject-tag subject-{{ obj.subject|lower|slugify }}">
+                    {{ obj.subject }}
+                </span>
+            </div>
+
+            <div class="assignment-meta">
+                <span><i class="bi bi-calendar-event"></i> Due: {{ obj.date_due }}</span>
+            </div>
+
+            <div class="progress mt-3">
+                <div class="progress-bar bg-success" style="--w: {{ a.pct_graded }}%; width: var(--w);">
+                    {{ a.graded }} graded
+                </div>
+                <div class="progress-bar bg-danger" style="--w: {{ a.pct_missing }}%; width: var(--w);">
+                    {{ a.missing }} missing
+                </div>
+                <div class="progress-bar bg-secondary" style="--w: {{ a.pct_ungraded }}%; width: var(--w);">
+                    {{ a.ungraded }} ungraded
+                </div>
+            </div>
+
+            <!--  CLEAN BUTTON GROUP WITH ICONS + HOVER ANIMATION -->
+            <div class="assignment-actions mt-3">
+                <a href="{% url 'enter_grades' obj.id %}" class="action-btn action-primary">
+                    <i class="bi bi-pencil-square"></i>
+                    Enter Grades
+                </a>
+
+                <a href="{% url 'delete_assignment' obj.id %}"
+                   class="action-btn action-danger"
+                   onclick="return confirm('Delete this assignment?');">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.assignment-page {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Masonry Grid */
+.assignment-grid {
+    column-count: 1;
+    column-gap: 20px;
+}
+@media (min-width: 700px) { .assignment-grid { column-count: 2; } }
+@media (min-width: 1100px) { .assignment-grid { column-count: 3; } }
+
+/* Assignment Card */
+.assignment-card {
+    break-inside: avoid;
+    background: #2a2a2a;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    border-left: 6px solid #007bff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease forwards;
+}
+.assignment-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/*  BUTTON GROUP */
+.assignment-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/*  Base Action Button */
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+/*  Hover animation */
+.action-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* Primary (Enter Grades) */
+.action-primary {
+    background: #0d6efd;
+    color: white;
+}
+.action-primary:hover {
+    background: #0b5ed7;
+}
+
+/* Danger (Trash icon only) */
+.action-danger {
+    background: #dc3545;
+    color: white;
+    padding: 8px 12px; /* smaller for icon-only */
+}
+.action-danger:hover {
+    background: #bb2d3b;
+}
+
+/* Subject Colors */
+.subject-reading { background: #2e8b57; color: #fff; padding: 4px 10px; border-radius: 6px; }
+.subject-math { background: #1e5eff; color: #fff; padding: 4px 10px; border-radius: 6px; }
+.subject-writing { background: #ff8c1a; color: #fff; padding: 4px 10px; border-radius: 6px; }
+.subject-science { background: #9b30ff; color: #fff; padding: 4px 10px; border-radius: 6px; }
+.subject-social-studies { background: #c9a000; color: #fff; padding: 4px 10px; border-radius: 6px; }
+
+/* Floating Add Button */
+.fab-add {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    background: #007bff;
+    color: white;
+    padding: 16px;
+    border-radius: 50%;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease;
+    z-index: 9999;
+}
+.fab-add:hover { transform: scale(1.1); }
+
+/* Controls */
+.assignment-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.assignment-controls .form-select {
+    background-color: #2f2f2f;
+    color: #eaeaea;
+    border-radius: 8px;
+    border: 1px solid #444;
+    padding: 10px;
+}
+.assignment-controls .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.3);
+}
+.assignment-controls .form-select option {
+    background-color: #2f2f2f;
+    color: #eaeaea;
+}
+</style>
+
+<script>
+const cards = [...document.querySelectorAll(".assignment-card")];
+
+document.getElementById("sortSelect").addEventListener("change", e => {
+    const val = e.target.value;
+    cards.sort((a, b) => {
+        if (val === "due") return a.dataset.due.localeCompare(b.dataset.due);
+        if (val === "subject") return a.dataset.subject.localeCompare(b.dataset.subject);
+        if (val === "completion") {
+            const pa = a.dataset.graded / a.dataset.total;
+            const pb = b.dataset.graded / b.dataset.total;
+            return pb - pa;
+        }
+    });
+    const grid = document.querySelector(".assignment-grid");
+    grid.innerHTML = "";
+    cards.forEach(c => grid.appendChild(c));
+});
+
+document.getElementById("filterSelect").addEventListener("change", e => {
+    const val = e.target.value;
+    cards.forEach(card => {
+        card.style.display = (val === "all" || card.dataset.subject === val) ? "block" : "none";
+    });
+});
+</script>
+{% endblock %}

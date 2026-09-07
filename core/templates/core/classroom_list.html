@@ -1,0 +1,33 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Classrooms{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Classrooms</h1>
+
+<p>
+    <a href="{% url 'create_classroom' %}" class="btn btn-primary">Add New Classroom</a>
+</p>
+
+<table class="table table-striped table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for classroom in classrooms %}
+            <tr>
+                <td>
+                    <a href="{% url 'classroom_detail' classroom.pk %}">
+                        {{ classroom.name }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back to Home</a>
+{% endblock %}

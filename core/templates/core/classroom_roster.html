@@ -1,0 +1,63 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Roster - {{ classroom.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Class Roster: {{ classroom.name }}</h1>
+        <button onclick="window.print()" class="btn btn-dark">Print</button>
+    </div>
+
+    <p><strong>Teacher:</strong>
+        {% if classroom.teacher %}
+            {{ classroom.teacher.user.get_full_name }}
+        {% else %}
+            <em>No teacher assigned</em>
+        {% endif %}
+    </p>
+
+    <hr>
+
+    {% if students %}
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ student.first_name }} {{ student.last_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted">No students assigned to this classroom.</p>
+    {% endif %}
+
+    <a href="{% url 'classroom_detail' classroom.pk %}" class="btn btn-secondary mt-3">
+        Back to Classroom
+    </a>
+
+</div>
+
+<style>
+/* Printer-friendly adjustments */
+@media print {
+    .btn, nav, footer {
+        display: none !important;
+    }
+    body {
+        background: white;
+    }
+}
+</style>
+
+{% endblock %}

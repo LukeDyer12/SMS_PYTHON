@@ -1,0 +1,57 @@
+{% extends "site/base.html" %}
+
+{% block title %}Add Classroom{% endblock %}
+
+{% block content %}
+<h1>Add New Classroom</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <p>
+        Classroom Name:
+        <input type="text" name="name" class="form-control">
+    </p>
+
+    <p>
+        Teacher:
+        <select name="teacher_id" class="form-select">
+            {% for teacher in teachers %}
+                <option value="{{ teacher.pk }}">{{ teacher }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <button type="submit" class="btn btn-primary">Create Classroom</button>
+</form>
+
+<p><a href="{% url 'classroom_list' %}">Cancel</a></p>
+
+<style>
+/* Dark mode select styling for Add Classroom page */
+.form-select,
+select {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+    border-radius: 8px;
+}
+
+/* Options inside the dropdown */
+.form-select option,
+select option {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+}
+
+/* Dark mode input styling */
+.form-control,
+input[type="text"] {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+    border-radius: 8px;
+}
+</style>
+
+{% endblock %}

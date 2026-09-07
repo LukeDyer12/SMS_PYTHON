@@ -1,0 +1,15 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Create Parent{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Create Parent</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary">Create Parent</button>
+</form>
+
+{% endblock %}

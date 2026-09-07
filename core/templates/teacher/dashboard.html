@@ -1,0 +1,78 @@
+{% extends "site/base.html" %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">Welcome, {{ teacher.user.first_name }}</h2>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+
+        <!-- Classes -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-people display-5 icon-primary"></i>
+                    <h5 class="card-title mt-2">Classes</h5>
+                    <p class="display-6">{{ classrooms.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-text display-5 icon-success"></i>
+                    <h5 class="card-title mt-2">Assignments</h5>
+                    <p class="display-6">{{ assignments.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-badge display-5 icon-warning"></i>
+                    <h5 class="card-title mt-2">Students</h5>
+                    <p class="display-6">
+                        {{ teacher.classroom_set.all|sum:"students.count" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Class List -->
+    <h4>Your Classes</h4>
+    <div class="list-group mb-4">
+        {% for c in classrooms %}
+            <a href="{% url 'classroom_detail' c.id %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-people-fill icon-primary"></i>
+                {{ c.name }}
+            </a>
+        {% empty %}
+            <p>No classes assigned.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Assignments -->
+    <h4>Recent Assignments</h4>
+    <div class="list-group">
+        {% for a in assignments %}
+            <a href="{% url 'assignment_detail' a.id %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-journal-text icon-success"></i>
+                {{ a.title }} — {{ a.classroom.name }}
+                <div class="text-muted small">Due: {{ a.due_date }}</div>
+            </a>
+        {% empty %}
+            <p>No assignments yet.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

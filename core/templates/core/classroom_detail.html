@@ -1,0 +1,475 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ classroom.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">{{ classroom.name }}</h2>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-4" id="classroomTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                <i class="bi bi-speedometer2 icon-primary"></i> Overview
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">
+                <i class="bi bi-people icon-info"></i> Students
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">
+                <i class="bi bi-journal-text icon-success"></i> Assignments
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
+                <i class="bi bi-clipboard-data icon-warning"></i> Attendance
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                <i class="bi bi-gear icon-primary"></i> Settings
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content" id="classroomTabsContent">
+
+        <!--  TAB 1 — OVERVIEW -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+
+            <!-- CARD 1 — Assignment Overview -->
+            <div class="card card-accent-info mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Assignment Overview</h4>
+
+                    {% if assignments %}
+                        <p><strong>Total Assignments:</strong> {{ assignments.count }}</p>
+
+                        <p><strong>Most Recent:</strong>
+                            {{ assignments.0.title }}
+                            ({{ assignments.0.date_assigned }})
+                        </p>
+
+                        <h6 class="mt-3">Upcoming Due</h6>
+                        <ul>
+                            {% for assignment in assignments %}
+                                {% if assignment.due_date and assignment.due_date >= today %}
+                                    <li>{{ assignment.title }} — due {{ assignment.due_date }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No assignments yet for this classroom.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- CARD 2 — Performance Averages -->
+            <div class="card card-accent-success mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Performance Averages</h4>
+
+                    <!-- Class Average -->
+                    <h5>Class Average</h5>
+                    {% if class_average_percent %}
+                        <p class="fs-4">{{ class_average_percent|floatformat:2 }}%</p>
+                    {% else %}
+                        <p class="text-muted">No grades entered yet.</p>
+                    {% endif %}
+
+                    <hr>
+
+                    <!-- Assignment Averages -->
+                    <h5>Assignment Averages</h5>
+                    {% if assignment_averages %}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in assignment_averages %}
+                                    <tr>
+                                        <td>{{ item.assignment.title }}</td>
+                                        <td>
+                                            {% if item.average_percent %}
+                                                {{ item.average_percent|floatformat:2 }}%
+                                            {% else %}
+                                                <span class="text-muted">No grades yet</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No assignments found.</p>
+                    {% endif %}
+
+                    <hr>
+
+                    <!-- Student Averages -->
+                    <h5>Student Averages</h5>
+                    {% if student_averages %}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in student_averages %}
+                                    <tr>
+                                        <td>{{ item.student.first_name }} {{ item.student.last_name }}</td>
+                                        <td>
+                                            {% if item.average_percent %}
+                                                {{ item.average_percent|floatformat:2 }}%
+                                            {% else %}
+                                                <span class="text-muted">No grades yet</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No students found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- CARD 3 — Missing Assignments -->
+            <div class="card card-accent-warning mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Missing Assignments</h4>
+
+                    <h5>Overall Status</h5>
+                    <p class="fs-4 fw-bold">
+                        Total Missing Assignments:
+                        {% if total_missing >= 10 %}
+                            <span class="text-danger">🔥 {{ total_missing }}</span>
+                        {% elif total_missing >= 5 %}
+                            <span class="text-warning">⚠️ {{ total_missing }}</span>
+                        {% else %}
+                            <span class="text-success">✔️ {{ total_missing }}</span>
+                        {% endif %}
+                    </p>
+
+                    <hr>
+
+                    <h5>Top 3 Students With Most Missing Assignments</h5>
+                    {% if top_missing_students %}
+                        <ol>
+                            {% for item in top_missing_students %}
+                                <li>
+                                    <strong>{{ item.student.first_name }} {{ item.student.last_name }}</strong> —
+                                    {% if item.count >= 3 %}
+                                        🔥 <span class="text-danger fw-bold">{{ item.count }}</span>
+                                    {% elif item.count >= 1 %}
+                                        ⚠️ <span class="text-warning fw-bold">{{ item.count }}</span>
+                                    {% else %}
+                                        ✔️ <span class="text-success fw-bold">0</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p class="text-success fw-bold">No missing assignments in this class!</p>
+                    {% endif %}
+
+                    <hr>
+
+                    <h5>Missing Assignments Per Student</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Missing Assignments</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in missing_assignments %}
+                                <tr class="
+                                    {% if item.count >= 3 %}
+                                        table-danger
+                                    {% elif item.count >= 1 %}
+                                        table-warning
+                                    {% else %}
+                                        table-success
+                                    {% endif %}
+                                ">
+                                    <td>{{ item.student.first_name }} {{ item.student.last_name }}</td>
+                                    <td>
+                                        {% if item.missing %}
+                                            <ul>
+                                                {% for assignment in item.missing %}
+                                                    <li>
+                                                        <a href="{% url 'assignment_detail' assignment.id %}">
+                                                            {{ assignment.title }}
+                                                        </a>
+                                                        (Due:
+                                                            {% if assignment.date_due %}
+                                                                {{ assignment.date_due|date:"M j, Y" }}
+                                                            {% else %}
+                                                                No due date
+                                                            {% endif %}
+                                                        )
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="fw-bold">No missing assignments</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">
+                                        {% if item.count >= 3 %}
+                                            🔥 {{ item.count }}
+                                        {% elif item.count >= 1 %}
+                                            ⚠️ {{ item.count }}
+                                        {% else %}
+                                            ✔️ 0
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--  TAB 2 — STUDENTS -->
+        <div class="tab-pane fade" id="students" role="tabpanel">
+
+            <div class="card card-accent-primary mb-4">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">Students</h4>
+
+                        <!-- Manage Students button -->
+                        <a href="{% url 'manage_students' classroom.id %}" 
+                           class="btn btn-outline-light classroom-action-btn"
+                           style="border-radius: 8px;">
+                            <i class="bi bi-sliders"></i> Manage Students
+                        </a>
+                    </div>
+
+                    {% if students %}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th style="width: 150px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                    <tr>
+                                        <td>{{ student }}</td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a href="{% url 'edit_student' student.pk %}" class="btn btn-sm btn-primary classroom-action-btn">
+                                                    <i class="bi bi-pencil-square"></i> Edit
+                                                </a>
+                                                <a href="{% url 'remove_student_from_classroom' classroom.pk student.pk %}" class="btn btn-sm btn-danger classroom-action-btn">
+                                                    <i class="bi bi-x-circle"></i> Remove
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No students assigned to this classroom.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Add Student -->
+            <div class="card card-accent-success mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Add Student</h4>
+
+                    <form method="POST" action="{% url 'add_student_to_classroom' classroom.pk %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <select name="student_id" class="form-select">
+                                    {% for student in all_students %}
+                                        <option value="{{ student.pk }}">{{ student }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success w-100 classroom-action-btn">
+                                    <i class="bi bi-person-plus"></i> Add Student
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!--  TAB 3 — ASSIGNMENTS -->
+        <div class="tab-pane fade" id="assignments" role="tabpanel">
+
+            <div class="card card-accent-success mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Assignments</h4>
+
+                    {% if assignments %}
+                        <div class="list-group">
+                            {% for a in assignments %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-journal-text icon-success"></i>
+                                        <strong>{{ a.title }}</strong>
+                                        <div class="text-muted small">Due: {{ a.due_date }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No assignments yet.</p>
+                    {% endif %}
+
+                    <a href="{% url 'assignment_list' classroom.id %}" class="btn btn-outline-primary mt-3 classroom-action-btn">
+                        <i class="bi bi-list-task"></i> View All Assignments
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!--  TAB 4 — ATTENDANCE -->
+        <div class="tab-pane fade" id="attendance" role="tabpanel">
+
+            <div class="card card-accent-warning mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Attendance</h4>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <a href="{% url 'take_attendance' classroom.pk %}" class="btn btn-warning classroom-action-btn">
+                            <i class="bi bi-check2-square"></i> Take Attendance
+                        </a>
+                        <a href="{% url 'classroom_attendance_history' classroom.pk %}" class="btn btn-info classroom-action-btn">
+                            <i class="bi bi-clock-history"></i> Attendance History
+                        </a>
+                        <a href="{% url 'classroom_attendance_summary' classroom.pk %}" class="btn btn-secondary classroom-action-btn">
+                            <i class="bi bi-graph-up"></i> Attendance Summary
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--  TAB 5 — SETTINGS -->
+        <div class="tab-pane fade" id="settings" role="tabpanel">
+
+            <!-- Teacher Card -->
+            <div class="card card-accent-primary mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Teacher</h4>
+                    <p>{{ classroom.teacher.user.get_full_name }}</p>
+                    <a href="{% url 'edit_classroom' classroom.pk %}" class="btn btn-primary btn-sm classroom-action-btn">
+                        <i class="bi bi-person-badge"></i> Change Teacher
+                    </a>
+                </div>
+            </div>
+
+            <!-- Classroom Actions -->
+            <div class="card card-accent-warning mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Classroom Settings</h4>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+
+                        <!-- Edit Classroom -->
+                        <a href="{% url 'edit_classroom' classroom.pk %}" class="btn btn-primary classroom-action-btn">
+                            <i class="bi bi-pencil-square"></i> Edit Classroom
+                        </a>
+
+                        <!-- Icon-only Delete Classroom -->
+                        <a href="{% url 'delete_classroom' classroom.pk %}"
+                           class="btn btn-danger classroom-delete-btn"
+                           onclick="return confirm('Delete this classroom? This cannot be undone.');"
+                           title="Delete Classroom">
+                            <i class="bi bi-trash"></i>
+                        </a>
+
+                        <!-- Back to Classrooms -->
+                        <a href="{% url 'classroom_list' %}" class="btn btn-secondary classroom-action-btn">
+                            <i class="bi bi-arrow-left"></i> Back to Classrooms
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+/* Dark mode select styling */
+.form-select {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+}
+
+/* Dropdown options */
+.form-select option {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+}
+
+/* Shared action button animation */
+.classroom-action-btn,
+.classroom-delete-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover lift */
+.classroom-action-btn:hover,
+.classroom-delete-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+
+/* Icon-only delete button */
+.classroom-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 8px;
+}
+</style>
+
+{% endblock %}

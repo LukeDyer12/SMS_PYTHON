@@ -1,0 +1,76 @@
+{% extends "site/base.html" %}
+
+{% block title %}Parent Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">Welcome, {{ parent.user.first_name }}</h2>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+
+        <!-- Children -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill display-5 icon-primary"></i>
+                    <h5 class="card-title mt-2">Children</h5>
+                    <p class="display-6">{{ children.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Assignments -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-event display-5 icon-success"></i>
+                    <h5 class="card-title mt-2">Upcoming Assignments</h5>
+                    <p class="display-6">{{ upcoming_assignments.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Alerts -->
+        <div class="col-md-4">
+            <div class="card shadow-sm card-accent-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-circle display-5 icon-warning"></i>
+                    <h5 class="card-title mt-2">Attendance Alerts</h5>
+                    <p class="display-6">{{ attendance_alerts.count }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Children List -->
+    <h4>Your Children</h4>
+    <div class="list-group mb-4">
+        {% for child in children %}
+            <a href="{% url 'student_detail' child.id %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-person-fill icon-primary"></i>
+                {{ child.first_name }} {{ child.last_name }}
+            </a>
+        {% empty %}
+            <p>No children linked to this account.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Assignments -->
+    <h4>Upcoming Assignments</h4>
+    <div class="list-group">
+        {% for a in upcoming_assignments %}
+            <div class="list-group-item">
+                <i class="bi bi-journal-text icon-success"></i>
+                <strong>{{ a.title }}</strong> — {{ a.classroom.name }}
+                <div class="text-muted small">Due: {{ a.due_date }}</div>
+            </div>
+        {% empty %}
+            <p>No upcoming assignments.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

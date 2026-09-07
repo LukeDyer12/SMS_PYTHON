@@ -1,0 +1,34 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Edit {{ classroom.name }}{% endblock %}
+
+{% block content %}
+<h1>Edit Classroom: {{ classroom.name }}</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <p>
+        Classroom Name:
+        <input type="text" name="name" value="{{ classroom.name }}">
+    </p>
+
+    <p>
+        Teacher:
+        <select name="teacher_id">
+            {% for teacher in teachers %}
+                <option value="{{ teacher.pk }}" {% if teacher.pk == classroom.teacher.pk %}selected{% endif %}>
+                    {{ teacher }}
+                </option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<p>
+    <a href="{% url 'classroom_detail' classroom.pk %}">Cancel</a>
+</p>
+{% endblock %}

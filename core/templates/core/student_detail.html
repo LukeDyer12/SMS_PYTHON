@@ -1,0 +1,80 @@
+{% extends "site/base.html" %}
+
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-3">
+
+            {% if student.photo %}
+                <img src="{{ student.photo.url }}" class="img-fluid rounded mb-2" alt="Student Photo">
+
+                <form action="{% url 'remove_student_photo' student.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning btn-sm mt-2">
+                        Remove Photo
+                    </button>
+                </form>
+            {% else %}
+                <img src="/static/default_student.png" class="img-fluid rounded mb-2" alt="No Photo">
+            {% endif %}
+
+            <!-- Upload / Change Photo -->
+            <form action="{% url 'upload_student_photo' student.id %}" method="post" enctype="multipart/form-data" class="mt-3">
+                {% csrf_token %}
+                <input type="file" name="photo" accept="image/*" class="form-control mb-2" required>
+                <button type="submit" class="btn btn-success btn-sm">Upload / Change Photo</button>
+            </form>
+
+        </div>
+
+        <div class="col-md-9">
+            <p><strong>Date of Birth:</strong> {{ student.date_of_birth }}</p>
+            <p><strong>Parent Name:</strong> {{ student.parent_name }}</p>
+            <p><strong>Parent Phone:</strong> {{ student.parent_phone }}</p>
+            <p><strong>Parent Email:</strong> {{ student.parent_email }}</p>
+            <p><strong>Classroom:</strong> {{ student.classroom }}</p>
+
+            <a href="{% url 'edit_student' student.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'delete_student' student.id %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'student_report_pdf' student.id %}" class="btn btn-secondary">Download PDF Report</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>Attendance Summary</h4>
+    <ul>
+        <li>Present: {{ present }}</li>
+        <li>Absent: {{ absent }}</li>
+        <li>Tardy: {{ tardy }}</li>
+    </ul>
+
+    <h4>Attendance History</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No attendance records found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

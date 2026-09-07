@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1 style="margin-bottom: 20px;">School Dashboard</h1>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+
+    <div style="flex: 1; min-width: 250px; background: #4CAF50; color: white; padding: 20px; border-radius: 8px;">
+        <h2>{{ total_students }}</h2>
+        <p>Students</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #2196F3; color: white; padding: 20px; border-radius: 8px;">
+        <h2>{{ total_parents }}</h2>
+        <p>Parents</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #FF9800; color: white; padding: 20px; border-radius: 8px;">
+        <h2>{{ total_teachers }}</h2>
+        <p>Teachers</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #9C27B0; color: white; padding: 20px; border-radius: 8px;">
+        <h2>{{ total_classrooms }}</h2>
+        <p>Classrooms</p>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: #F44336; color: white; padding: 20px; border-radius: 8px;">
+        <h2>{{ total_assignments }}</h2>
+        <p>Assignments</p>
+    </div>
+
+</div>
+
+<hr style="margin: 30px 0;">
+
+<h2>Quick Links</h2>
+<ul style="font-size: 18px;">
+    <li><a href="/admin/core/student/">Manage Students</a></li>
+    <li><a href="/admin/core/parent/">Manage Parents</a></li>
+    <li><a href="/admin/core/teacher/">Manage Teachers</a></li>
+    <li><a href="/admin/core/classroom/">Manage Classrooms</a></li>
+    <li><a href="/admin/core/assignment/">Manage Assignments</a></li>
+</ul>
+
+{% endblock %}

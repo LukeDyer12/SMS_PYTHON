@@ -1,0 +1,23 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Student Created{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Student Created</h1>
+
+<p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+
+{% if password %}
+    <p><strong>Username:</strong> {{ student.user.username }}</p>
+    <p><strong>Temporary Password:</strong> {{ password }}</p>
+
+    <div class="alert alert-info">
+        Make sure to save this password. It will not be shown again.
+    </div>
+{% else %}
+    <p class="text-muted">No login created.</p>
+{% endif %}
+
+<a href="{% url 'student_list' %}" class="btn btn-primary">Back to Students</a>
+{% endblock %}

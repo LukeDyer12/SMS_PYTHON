@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="font-family: Arial, sans-serif; margin: 40px; font-size: 14px;">
+
+<!-- SIMPLE, SAFE HEADER -->
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+        <td style="width: 8px; background-color: #5B21B6;"></td>
+
+        <td style="width: 100px; padding-left: 20px;">
+            <img src="C:/Users/zdyer/schoolms/static/images/logo.png"
+                 style="width: 80px; height: auto;">
+        </td>
+
+        <td style="vertical-align: top; padding-left: 10px;">
+            <div style="font-size: 24px; font-weight: bold; color: #5B21B6;">
+                Your School Name Here
+            </div>
+
+            <div style="font-size: 14px; color: #444; margin-top: 4px;">
+                123 School Street, Your City, MD 00000
+            </div>
+
+            <div style="font-size: 14px; color: #444;">
+                Phone: (555) 123-4567 • info@yourschool.com
+            </div>
+
+            <div style="font-size: 13px; color: #666; margin-top: 6px; font-style: italic;">
+                Inspiring Excellence Every Day
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div style="margin-bottom: 20px;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 6px; border: 1px solid #333; width: 33%;">
+                <strong>Report Period:</strong> {{ report_period }}
+            </td>
+            <td style="padding: 6px; border: 1px solid #333; width: 33%;">
+                <strong>School Year:</strong> {{ school_year }}
+            </td>
+            <td style="padding: 6px; border: 1px solid #333; width: 33%;">
+                <strong>Teacher:</strong> {{ teacher_name }}
+            </td>
+        </tr>
+    </table>
+</div>
+
+{% if student.photo %}
+    <img src="{{ student.photo.path }}" 
+         style="float: right; width: 140px; height: auto; margin-left: 20px; border: 1px solid #ccc; padding: 3px;">
+{% endif %}
+
+<h2 style="margin-bottom: 5px;">{{ student.first_name }} {{ student.last_name }}</h2>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Student Information</h3>
+    <p><strong>Date of Birth:</strong> {{ student.date_of_birth|default:"—" }}</p>
+    <p><strong>Classroom:</strong> {{ student.classroom|default:"—" }}</p>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Parent Information</h3>
+    <p><strong>Name:</strong> {{ student.parent_name|default:"—" }}</p>
+    <p><strong>Phone:</strong> {{ student.parent_phone|default:"—" }}</p>
+    <p><strong>Email:</strong> {{ student.parent_email|default:"—" }}</p>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Attendance Summary</h3>
+    <p><strong>Present:</strong> {{ present|default:"0" }}</p>
+    <p><strong>Absent:</strong> {{ absent|default:"0" }}</p>
+    <p><strong>Tardy:</strong> {{ tardy|default:"0" }}</p>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Attendance History</h3>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Date</th>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+                <tr>
+                    <td style="border: 1px solid #333; padding: 8px;">{{ record.date|default:"—" }}</td>
+                    <td style="border: 1px solid #333; padding: 8px;">{{ record.status|default:"—" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2" style="border: 1px solid #333; padding: 8px;">No attendance records found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Academic Progress</h3>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Subject</th>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Progress</th>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Reading</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Math</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Writing</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Science</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Social Studies</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Behavior & Conduct</h3>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Category</th>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Rating</th>
+                <th style="border: 1px solid #333; padding: 8px; background: #eee;">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Respect</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Participation</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Effort</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+            <tr><td style="border: 1px solid #333; padding: 8px;">Self-Control</td><td style="border: 1px solid #333; padding: 8px;">—</td><td style="border: 1px solid #333; padding: 8px;">—</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 25px;">
+    <h3 style="margin-bottom: 5px;">Teacher Comments</h3>
+
+    <div style="border: 1px solid #333; padding: 12px; height: 120px;">
+        <!-- Leave blank for handwritten or future dynamic comments -->
+    </div>
+</div>
+
+<div style="margin-top: 50px;">
+    <h3 style="margin-bottom: 5px;">Signatures</h3>
+
+    <div style="margin-top: 30px;">
+        <div style="width: 45%; float: left;">
+            _______________________________<br>
+            <strong>Teacher Signature</strong>
+        </div>
+
+        <div style="width: 45%; float: right;">
+            _______________________________<br>
+            <strong>Parent/Guardian Signature</strong>
+        </div>
+    </div>
+
+    <div style="clear: both; margin-top: 40px;">
+        Date: ___________________________
+    </div>
+</div>
+
+<div style="margin-top: 40px; text-align: center;">
+    <h3>Scan for Student Profile</h3>
+    <img src="data:image/png;base64,{{ qr_code }}" 
+         style="width: 120px; height: 120px; margin-top: 10px;">
+</div>
+
+<!-- ⭐ PRINCIPAL SIGNATURE BLOCK -->
+<div style="margin-top: 40px; text-align: center;">
+    <p style="margin-bottom: 5px;">______________________________</p>
+    <p style="font-weight: bold; font-size: 14px; margin: 0;">Principal Signature</p>
+    <p style="font-size: 13px; color: #555; margin-top: 4px;">
+        {{ principal_name }} — {{ principal_title }}
+    </p>
+</div>
+
+
+
+<pdf:footer>
+    <div style="text-align: center; font-size: 12px; margin-top: 10px;">
+        Page <pdf:pagenumber /> of <pdf:pagecount />
+    </div>
+</pdf:footer>
+
+</body>
+</html>

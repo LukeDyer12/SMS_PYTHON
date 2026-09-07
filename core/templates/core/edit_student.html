@@ -1,0 +1,22 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+<h1>Edit Student</h1>
+
+{% if student.photo %}
+    <img src="{{ student.photo.url }}" alt="Student Photo"
+         style="max-width:200px; margin-bottom:20px; border-radius:6px;">
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a href="{% url 'student_detail' student.pk %}">Cancel</a></p>
+{% endblock %}

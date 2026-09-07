@@ -1,0 +1,47 @@
+{% extends "site/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-link">← Back</a>
+
+    <h1>Manage Students for {{ classroom.name }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="student-list">
+            {% for student in all_students %}
+            <label class="student-item">
+                <input type="checkbox"
+                       name="students"
+                       value="{{ student.id }}"
+                       {% if student.classroom_id == classroom.id %}checked{% endif %}>
+                {{ student.first_name }} {{ student.last_name }}
+            </label>
+            {% endfor %}
+        </div>
+
+        <button class="btn btn-primary mt-3">Save Changes</button>
+    </form>
+</div>
+
+<style>
+.student-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.student-item {
+    background: #2a2a2a;
+    padding: 12px;
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+</style>
+
+{% endblock %}

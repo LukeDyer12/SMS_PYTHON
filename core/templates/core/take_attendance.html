@@ -1,0 +1,37 @@
+{% extends "site/base.html" %}
+
+
+{% block title %}Attendance - {{ classroom.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Attendance for {{ classroom.name }} ({{ today }})</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Student</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Tardy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                <td><input type="radio" name="status_{{ student.pk }}" value="present" required></td>
+                <td><input type="radio" name="status_{{ student.pk }}" value="absent"></td>
+                <td><input type="radio" name="status_{{ student.pk }}" value="tardy"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Save Attendance</button>
+    <a href="{% url 'classroom_detail' classroom.pk %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

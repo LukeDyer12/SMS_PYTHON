@@ -1,0 +1,31 @@
+{% extends "site/base.html" %}
+
+{% block title %}Enter Grade{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Enter Grade</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+        <p><strong>Assignment:</strong> {{ assignment.title }}</p>
+        <p><strong>Points Possible:</strong> {{ assignment.points_possible }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Points Earned</label>
+                <input type="number" name="points_earned" class="form-control"
+                       value="{{ grade.points_earned }}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Grade</button>
+            <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-secondary ms-2">
+                Cancel
+            </a>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
